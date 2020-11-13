@@ -9,3 +9,7 @@ with plt.xkcd():
     plt.title('График "от руки"')
 
 plt.show()
+
+som_list = [(1, 1), (2, 3), (25, 5)]
+for i, k in enumerate(som_list):
+    print(i, k)
