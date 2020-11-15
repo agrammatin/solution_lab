@@ -1,4 +1,4 @@
-"""" Draw with library turtle spider
+"""" Draw spiral with library turtle
 """
 import turtle
 import math

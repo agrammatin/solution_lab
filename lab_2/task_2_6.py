@@ -1,4 +1,4 @@
-"""" Draw with library turtle spider
+"""" Draw spider with library turtle
 """
 import turtle
 

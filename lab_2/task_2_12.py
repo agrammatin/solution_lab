@@ -1,7 +1,6 @@
-"""" Draw with library turtle spider
+"""" Draw spring with library turtle
 """
 import turtle
-import math
 
 
 def arc(n):

@@ -1,10 +1,10 @@
-"""" Draw with library turtle spider
+"""" Draw polygon with library turtle
 """
 import turtle
 import math
 
 
-def polygon_bild(n):
+def polygon_build(n):
     angle = 360 / n
     turtle.left((180 - angle) / 2)
     for i in range(1, n + 1):
@@ -22,7 +22,7 @@ for j in range(3, 14):
 
     turtle.pendown()
 
-    polygon_bild(j)
+    polygon_build(j)
 
 
 turtle.hideturtle()
