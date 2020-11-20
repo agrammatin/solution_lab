@@ -12,11 +12,9 @@ pygame.init()
 
 # Create a window
 screen = pygame.display.set_mode((1200, 800))
-screen.fill((30, 30, 30))
-pygame.display.set_caption('Python is amazing')
 
 # Define the colors we will use in RGB format
-BLACK = ( 0,   0,   0,)
+BLACK = (0,   0,   0,)
 WHITE = (255, 255, 255)
 CLR_BACK_1 = (255, 228, 196)
 CLR_BACK_2 = (255, 192, 203)
