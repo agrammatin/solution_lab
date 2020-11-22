@@ -76,11 +76,12 @@ def new_fig(lst):
     return lst
 
 
-def click(event_click, balls):
+def click(event_click, fig_lst, name):
     global lst_balls
+    global lst_rec
     hit = False
     lst_tmp = list()
-    for ball in balls:
+    for ball in fig_lst:
         x_bal = ball[1][0]
         y_bal = ball[1][1]
         r_bal = ball[2]
@@ -89,7 +90,10 @@ def click(event_click, balls):
             hit = True
         else:
             lst_tmp.append(ball)
-    lst_balls = lst_tmp
+    if name == 'ball':
+        lst_balls = lst_tmp
+    elif name == 'square':
+        lst_rec = lst_tmp
     return hit
 
 
@@ -141,10 +145,10 @@ while not finished:
             if event.key == pygame.K_q:
                 finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if click(event.pos, lst_balls):
+            if click(event.pos, lst_balls, 'ball'):
                 score += 1
                 display_update(score, lst_balls, lst_rec)
-            if click(event.pos, lst_rec):
+            if click(event.pos, lst_rec, 'square'):
                 score += 2
                 display_update(score, lst_balls, lst_rec)
     lst_balls = roll_fig(lst_balls, speed)
