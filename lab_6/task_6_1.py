@@ -4,8 +4,12 @@
 
 import pygame
 import math
+import sys
 from pygame.draw import *
 from random import randint
+
+from tkinter import *
+from tkinter import messagebox as mb
 
 # It is library initialization after import
 pygame.init()
@@ -20,14 +24,27 @@ CYAN = (0, 255, 255)
 BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
-FPS = 1
+FPS = 2
 DISP_X = 800
 DISP_Y = 600
+
+record = 0
+score = 0
 
 x, y, r = -1, -1, -1
 lst_balls = list()
 lst_rec = list()
-my_font = pygame.font.SysFont('Sans bolt', 130)
+my_font = pygame.font.SysFont('Sans bolt', 30)
+
+
+def check():
+    answer = mb.askyesno(
+        title="Вопрос",
+        message="Перенести данные?")
+    if answer:
+        s = entry.get()
+        entry.delete(0, END)
+        label['text'] = s
 
 
 def roll_fig(balls, way):
@@ -38,7 +55,6 @@ def roll_fig(balls, way):
         bl_x = ball[1][0]
         bl_y = ball[1][1]
         bl_r = ball[2]
-        print(bl_angle)
         if bl_x + bl_r > DISP_X - way:
             bl_x = DISP_X - bl_r
             bl_angle = randint(180, 360)
@@ -58,7 +74,6 @@ def roll_fig(balls, way):
 
         bl_x += way * math.cos(bl_angle * math.pi / 180)
         bl_y += way * math.sin(bl_angle * math.pi / 180)
-        print(bl_angle)
         bl_lst.append((ball[0], (bl_x, bl_y), bl_r, bl_angle))
     return bl_lst
 
@@ -97,15 +112,18 @@ def click(event_click, fig_lst, name):
     return hit
 
 
-def show_score(score_show):
+def show_score(score_show, record_show):
     """Display score"""
     text_surface = my_font.render(str(score_show), False, (0, 0, 0))
     screen.blit(text_surface, (20, 10))
+    text_record = my_font.render('Record : ' + str(record_show),
+                                 False, (0, 0, 0))
+    screen.blit(text_record, (300, 10))
 
 
-def display_update(score_sh, balls, squares):
+def display_update(score_sh, record_sh, balls, squares):
     screen.fill((230, 230, 230))
-    show_score(score_sh)
+    show_score(score_sh, record_sh)
     for i in balls:
         circle(screen, *i[:-1])
 
@@ -123,9 +141,21 @@ screen = pygame.display.set_mode((DISP_X, DISP_Y))
 screen.fill((230, 230, 230))
 pygame.display.set_caption('Catch the ball')
 
+try:
+    fin = open('record.txt', 'r')
+except FileNotFoundError:
+    fin = open('record.txt', 'w')
+    print(0, file=fin)
+    fin.close()
+    fin = open('record.txt', 'r')
+records = []
+for line in fin:
+    records.append(int(line.strip()))
+record_read = max(records)
+record = record_read
+fin.close()
 
-score = 0
-display_update(score, lst_balls, lst_rec)
+display_update(score, record, lst_balls, lst_rec)
 
 # Create object clock for creating delay
 clock = pygame.time.Clock()
@@ -147,10 +177,12 @@ while not finished:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if click(event.pos, lst_balls, 'ball'):
                 score += 1
-                display_update(score, lst_balls, lst_rec)
+                display_update(score, record, lst_balls, lst_rec)
             if click(event.pos, lst_rec, 'square'):
                 score += 2
-                display_update(score, lst_balls, lst_rec)
+                display_update(score, record, lst_balls, lst_rec)
+            if score > record:
+                record = score
     lst_balls = roll_fig(lst_balls, speed)
     lst_rec = roll_fig(lst_rec, speed)
     if time == 5:
@@ -159,7 +191,10 @@ while not finished:
         lst_balls = new_fig(lst_balls)
         time = 0
     time += 1
-    print(time)
-    display_update(score, lst_balls, lst_rec)
+    display_update(score, record, lst_balls, lst_rec)
+else:
+    if record > record_read:
+        with open('record.txt', 'a') as f_out:
+            print(record, file=f_out)
 
 pygame.quit()
