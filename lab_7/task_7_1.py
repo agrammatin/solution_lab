@@ -12,7 +12,7 @@ canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
 
 
-class ball():
+class Ball:
     def __init__(self, x=40, y=450):
         """ Конструктор класса ball
 
@@ -55,7 +55,6 @@ class ball():
         self.x += self.vx
         self.y -= self.vy
 
-
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
@@ -69,7 +68,7 @@ class ball():
         # return False
 
 
-class gun():
+class Gun:
     f2_power = 10
     f2_on = 0
     an = 1
@@ -92,7 +91,7 @@ class gun():
         """
         global balls, bullet
         bullet += 1
-        new_ball = ball()
+        new_ball = Ball()
         new_ball.r += 5
         self.an = math.atan((event.y-new_ball.y) / (event.x-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
@@ -106,10 +105,10 @@ class gun():
         if event:
             self.an = math.atan((event.y-450) / (event.x-20))
         if self.f2_on:
-            canv.itemconfig(self.id, fill='orange')
+            canv.itemconfig(self, fill='orange')
         else:
-            canv.itemconfig(self.id, fill='black')
-        canv.coords(self.id, 20, 450,
+            canv.itemconfig(self, fill='black')
+        canv.coords(self, 20, 450,
                     20 + max(self.f2_power, 20) * math.cos(self.an),
                     450 + max(self.f2_power, 20) * math.sin(self.an)
                     )
@@ -118,14 +117,18 @@ class gun():
         if self.f2_on:
             if self.f2_power < 100:
                 self.f2_power += 1
-            canv.itemconfig(self.id, fill='orange')
+            canv.itemconfig(self, fill='orange')
         else:
-            canv.itemconfig(self.id, fill='black')
+            canv.itemconfig(self, fill='black')
 
 
-class target():
+class Target:
+    points = 0
+    live = 1
+    '''
     self.points = 0
     self.live = 1
+    '''
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.id = canv.create_oval(0,0,0,0)
     # self.id_points = canv.create_text(30,30,text = self.points,font = '28')
@@ -137,8 +140,8 @@ class target():
         y = self.y = rnd(300, 550)
         r = self.r = rnd(2, 50)
         color = self.color = 'red'
-        canv.coords(self.id, x-r, y-r, x+r, y+r)
-        canv.itemconfig(self.id, fill=color)
+        canv.coords(self, x-r, y-r, x+r, y+r)    # canv.coords(self.id, x-r, y-r, x+r, y+r)
+        canv.itemconfig(self, fill=color)    # canv.itemconfig(self.id, fill=color)
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
@@ -147,9 +150,9 @@ class target():
         canv.itemconfig(self.id_points, text=self.points)
 
 
-t1 = target()
+t1 = Target()
 screen1 = canv.create_text(400, 300, text='', font='28')
-g1 = gun()
+g1 = Gun()
 bullet = 0
 balls = []
 
