@@ -8,9 +8,6 @@ import sys
 from pygame.draw import *
 from random import randint
 
-from tkinter import *
-from tkinter import messagebox as mb
-
 # It is library initialization after import
 pygame.init()
 
@@ -28,7 +25,6 @@ FPS = 2
 DISP_X = 800
 DISP_Y = 600
 
-record = 0
 score = 0
 
 x, y, r = -1, -1, -1
@@ -91,7 +87,7 @@ def new_fig(lst):
     return lst
 
 
-def click(event_click, fig_lst, name):
+def click(event_click, fig_lst, name_fig):
     global lst_balls
     global lst_rec
     hit = False
@@ -105,9 +101,9 @@ def click(event_click, fig_lst, name):
             hit = True
         else:
             lst_tmp.append(ball)
-    if name == 'ball':
+    if name_fig == 'ball':
         lst_balls = lst_tmp
-    elif name == 'square':
+    elif name_fig == 'square':
         lst_rec = lst_tmp
     return hit
 
@@ -136,24 +132,41 @@ def display_update(score_sh, record_sh, balls, squares):
     pygame.display.update()
 
 
+def read_file():
+    """
+    Read or create file for saving record
+    """
+    try:
+        fin = open('record.txt', 'r')
+    except FileNotFoundError:
+        fin = open('record.txt', 'w')
+        print(0, a0, file=fin)
+        fin.close()
+        fin = open('record.txt', 'r')
+    records = []
+    for line_read in fin:
+        records.append(int(line_read.strip()[-1]))
+    fin.close()
+    return max(records)
+
+
+def save_record(record_num):
+    """
+    Save record in file "record.txt"
+    :param record_num: :
+    """
+    name = input("Input your name \n")
+    with open('record.txt', 'a') as f_out:
+        print(name, record_num, file=f_out)
+
+
 # Create a window
 screen = pygame.display.set_mode((DISP_X, DISP_Y))
 screen.fill((230, 230, 230))
 pygame.display.set_caption('Catch the ball')
 
-try:
-    fin = open('record.txt', 'r')
-except FileNotFoundError:
-    fin = open('record.txt', 'w')
-    print(0, file=fin)
-    fin.close()
-    fin = open('record.txt', 'r')
-records = []
-for line in fin:
-    records.append(int(line.strip()))
-record_read = max(records)
+record_read = read_file()
 record = record_read
-fin.close()
 
 display_update(score, record, lst_balls, lst_rec)
 
@@ -194,7 +207,6 @@ while not finished:
     display_update(score, record, lst_balls, lst_rec)
 else:
     if record > record_read:
-        with open('record.txt', 'a') as f_out:
-            print(record, file=f_out)
+        save_record(record)
 
 pygame.quit()
