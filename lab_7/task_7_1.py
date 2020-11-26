@@ -3,11 +3,12 @@ import tkinter as tk
 import math
 import time
 
-# print (dir(math))
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
 
 root = tk.Tk()
 fr = tk.Frame(root)
-root.geometry('800x600')
+root.geometry(str(WINDOW_WIDTH) + 'x' + str(WINDOW_HEIGHT))
 canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
 
@@ -69,19 +70,23 @@ class Ball:
 
 
 class Gun:
-    f2_power = 10
-    f2_on = 0
-    an = 1
-    # self.id = canv.create_line(20,450,50,420,width=7) # FIXME: don't know how to set it...
+    def __init__(self):
+        self.f2_power = 10
+        self.f2_on = 0
+        self.an = 1
+        self.id = canv.create_line(20, 450, 50, 420, width=7)
+    ## FIXME: don't know how to set it...
     '''
     self.f2_power = 10
     self.f2_on = 0
     self.an = 1
-    # self.id = canv.create_line(20,450,50,420,width=7) # FIXME: don't know how to set it...
+    # self.id = canv.create_line(20,450,50,420,width=7) 
+    # FIXME: don't know how to set it...
     '''
 
     def fire2_start(self, event):
         self.f2_on = 1
+
 
     def fire2_end(self, event):
         """Выстрел мячом.
@@ -131,17 +136,26 @@ class Target:
     '''
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.id = canv.create_oval(0,0,0,0)
-    # self.id_points = canv.create_text(30,30,text = self.points,font = '28')
-    # self.new_target()
+    ## self.id_points = canv.create_text(30,30,text = self.points,font = '28')
+    ## self.new_target()
 
-    def new_target(self):
+    def __init__(self):
         """ Инициализация новой цели. """
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(2, 50)
+        x = self.x = rnd(100, WINDOW_WIDTH - 100)
+        y = self.y = rnd(100, WINDOW_HEIGHT - 100)
+        r = self.r = rnd(20, 50)
         color = self.color = 'red'
-        canv.coords(self, x-r, y-r, x+r, y+r)    # canv.coords(self.id, x-r, y-r, x+r, y+r)
-        canv.itemconfig(self, fill=color)    # canv.itemconfig(self.id, fill=color)
+        self.id = canv.create_oval(
+            self.x - self.r,
+            self.y - self.r,
+            self.x + self.r,
+            self.y + self.r,
+            fill=self.color
+        )
+        canv.coords(self.id, x-r, y-r, x+r, y+r)
+        # canv.coords(self.id, x-r, y-r, x+r, y+r)
+        canv.itemconfig(self.id, fill=color)
+        # canv.itemconfig(self.id, fill=color)
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
@@ -150,39 +164,41 @@ class Target:
         canv.itemconfig(self.id_points, text=self.points)
 
 
-t1 = Target()
+target_1 = Target()
 screen1 = canv.create_text(400, 300, text='', font='28')
-g1 = Gun()
+gun_1 = Gun()
 bullet = 0
 balls = []
 
 
 def new_game(event=''):
-    global gun, t1, screen1, balls, bullet
-    t1.new_target()
+    global gun_1, target_1, screen1, balls, bullet
+    # t1.new_target()
     bullet = 0
     balls = []
-    canv.bind('<Button-1>', g1.fire2_start)
-    canv.bind('<ButtonRelease-1>', g1.fire2_end)
-    canv.bind('<Motion>', g1.targetting)
+    canv.bind('<Button-1>', gun_1.fire2_start)
+    canv.bind('<ButtonRelease-1>', gun_1.fire2_end)
+    canv.bind('<Motion>', gun_1.targetting)
 
-    z = 0.03
-    t1.live = 1
-    while t1.live or balls:
+    ## z = 0.03
+
+    target_1.live = 1
+    while target_1.live or balls:
         for b in balls:
             b.move()
-            if b.hittest(t1) and t1.live:
-                t1.live = 0
-                t1.hit()
+            if b.hittest(target_1) and target_1.live:
+                target_1.live = 0
+                target_1.hit()
                 canv.bind('<Button-1>', '')
                 canv.bind('<ButtonRelease-1>', '')
-                canv.itemconfig(screen1, text='Вы уничтожили цель за ' + str(bullet) + ' выстрелов')
+                canv.itemconfig(screen1, text='Вы уничтожили цель за '
+                                              + str(bullet) + ' выстрелов')
         canv.update()
         time.sleep(0.03)
-        g1.targetting()
-        g1.power_up()
+        gun_1.targetting()
+        gun_1.power_up()
     canv.itemconfig(screen1, text='')
-    canv.delete(gun)
+    # canv.delete(gun)
     root.after(750, new_game)
 
 
